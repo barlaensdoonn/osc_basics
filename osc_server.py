@@ -1,0 +1,70 @@
+#!/usr/local/bin/python3
+# basic osc server example with osc4py3
+# 3/1/18
+# updated 3/2/18
+
+from osc4py3.as_allthreads import *
+from osc4py3 import oscmethod as oscm
+
+
+class OSCServer:
+
+    def __init__(self, handler='flex'):
+        self.host = '0.0.0.0'
+        self.port = 5555
+        self.handlers = {
+            'flex': {
+                'handler': self._flex_handler,
+                'arg_scheme': oscm.OSCARG_DATA
+            },
+            'static': {
+                'handler': self._static_handler,
+                'arg_scheme': oscm.OSCARG_DATAUNPACK
+            }
+        }
+
+        self.handler = self.handlers[handler]['handler']
+        self.arg_scheme = self.handlers[handler]['arg_scheme']
+        self._initialize()
+
+    def _flex_handler(self, address, *args):
+        '''
+        use this for variable # of arguments in osc message's data.
+        need to speciy argscheme OSCARG_DATA in osc_method() call
+        '''
+
+        print(f'received message addressed to: {address}')
+        print('message: {}'.format(*args))
+
+    def _static_handler(self, address, x, y, z):
+        '''
+        use this for static # of arguments in osc message's data.
+        corresponds to argscheme OSCARG_DATAUNPACK, which is the default
+        '''
+
+        print(f'received message addressed to: {address}')
+        print(f'message: {x}, {y}, {z}')
+
+    def _initialize(self):
+        '''
+        osc_method() binds handler function to an address, here all subaddresses of /test/
+        adding OSCARG_ADDRESS to argscheme sends address in message so server can see it
+        '''
+
+        osc_startup()
+        osc_udp_server(self.host, self.port, 'server')
+        osc_method('/test/*', self.handler, argscheme=oscm.OSCARG_ADDRESS + self.arg_scheme)
+
+    def serve(self):
+        '''
+        a method like this that calls osc_process() is only needed
+        when using osc4py3.as_eventloop
+        '''
+        running = True
+
+        try:
+            while running:
+                osc_process()
+        except KeyboardInterrupt:
+            osc_terminate()
+            running = False
