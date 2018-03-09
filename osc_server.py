@@ -33,7 +33,7 @@ class OSCServer:
         need to speciy argscheme OSCARG_DATA in osc_method() call
         '''
 
-        print(f'received message addressed to: {address}')
+        print('received message addressed to: {}'.format(address))
         print('message: {}'.format(*args))
 
     def _static_handler(self, address, x, y, z):
@@ -42,8 +42,8 @@ class OSCServer:
         corresponds to argscheme OSCARG_DATAUNPACK, which is the default
         '''
 
-        print(f'received message addressed to: {address}')
-        print(f'message: {x}, {y}, {z}')
+        print('received message addressed to: {}'.format(address))
+        print('message: {}, {}, {}'.format(x, y, z))
 
     def _initialize(self):
         '''
