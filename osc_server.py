@@ -1,17 +1,23 @@
 #!/usr/local/bin/python3
 # basic osc server example with osc4py3
 # 3/1/18
-# updated 3/2/18
+# updated 3/9/18
 
 from osc4py3.as_allthreads import *
 from osc4py3 import oscmethod as oscm
 
 
 class OSCServer:
+    '''
+    defaults to all open interfaces (0.0.0.0) on port 5555
 
-    def __init__(self, handler='flex'):
-        self.host = '0.0.0.0'
-        self.port = 5555
+    use handler='flex' for variable data in the message.
+    use handler='static' if data is fixed, or you want to add type or length checking
+    '''
+
+    def __init__(self, handler='flex', host='0.0.0.0', port=5555):
+        self.host = host
+        self.port = port
         self.handlers = {
             'flex': {
                 'handler': self._flex_handler,
@@ -57,8 +63,8 @@ class OSCServer:
 
     def serve(self):
         '''
-        a method like this that calls osc_process() is only needed
-        when using osc4py3.as_eventloop
+        a method like this that calls osc_process()
+        is only needed when using osc4py3.as_eventloop
         '''
         running = True
 
@@ -68,3 +74,9 @@ class OSCServer:
         except KeyboardInterrupt:
             osc_terminate()
             running = False
+
+
+if __name__ == '__main__':
+    # if use osc4py3.as_allthreads, server runs in the background
+    # no need to call server.serve() in an event loop
+    server = OSCServer()
