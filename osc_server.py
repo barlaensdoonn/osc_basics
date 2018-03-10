@@ -72,11 +72,16 @@ class OSCServer:
             while running:
                 osc_process()
         except KeyboardInterrupt:
+            print('shutting down server')
             osc_terminate()
             running = False
+            raise
 
 
 if __name__ == '__main__':
-    # if use osc4py3.as_allthreads, server runs in the background
-    # no need to call server.serve() in an event loop
-    server = OSCServer()
+    try:
+        # if use osc4py3.as_allthreads, server runs in the background
+        # no need to call server.serve() in an event loop
+        server = OSCServer()
+    except KeyboardInterrupt:
+        print('...user interrupt received, exiting...')
