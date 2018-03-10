@@ -23,7 +23,7 @@ class OSCClient:
         try:
             osc_udp_client(self.host, self.port, self.name)
         except gaierror:
-            print(f"can't find host {self.host}, unable to create client {self.name}")
+            print("can't find host {self.host}, unable to create client {self.name}".format(self.host, self.name))
             print('reraising exception')
             raise
 
