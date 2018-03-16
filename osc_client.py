@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 # basic osc client example with osc4py3
 # 3/1/18
-# updated 3/2/18
+# updated 3/15/18
 
 from socket import gaierror
 from osc4py3.as_allthreads import *
@@ -10,11 +10,11 @@ from osc4py3 import oscbuildparse as oscbp
 
 class OSCClient:
 
-    def __init__(self, host='raspberrypi.local', name='test_client', address='/test/me'):
+    def __init__(self, host='raspberrypi.local', port=5555, name='test_client', address='/test'):
         self.name = name
         self.address = address
         self.host = host
-        self.port = 5555
+        self.port = port
         self._initialize()
 
     def _initialize(self):
