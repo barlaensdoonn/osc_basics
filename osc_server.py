@@ -80,6 +80,7 @@ class OSCServer:
 
 if __name__ == '__main__':
     try:
+        print('initiating server...')
         # if use osc4py3.as_allthreads, server runs in the background
         # no need to call server.serve() in an event loop
         server = OSCServer()
