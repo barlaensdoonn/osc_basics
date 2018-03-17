@@ -39,3 +39,7 @@ class OSCClient:
     def send(self, data):
         msg = self._construct_msg(data)
         osc_send(msg, self.name)
+
+    def shutdown(self):
+        '''call this when terminating a script that uses OSCClient'''
+        osc_terminate()
