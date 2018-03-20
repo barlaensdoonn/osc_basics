@@ -1,8 +1,9 @@
 #!/usr/local/bin/python3
 # basic osc server example with osc4py3
 # 3/1/18
-# updated 3/9/18
+# updated 3/20/18
 
+import yaml
 from osc4py3.as_allthreads import *
 from osc4py3 import oscmethod as oscm
 
@@ -15,9 +16,9 @@ class OSCServer:
     use handler='static' if data is fixed, or you want to add type or length checking
     '''
 
-    def __init__(self, handler='flex', host='0.0.0.0', port=5555):
-        self.host = host
-        self.port = port
+    osc_config = 'osc_config.yaml'
+
+    def __init__(self, handler='flex'):
         self.handlers = {
             'flex': {
                 'handler': self._flex_handler,
@@ -29,9 +30,19 @@ class OSCServer:
             }
         }
 
+        self.config = self._load_config()
+        self.host = self.config['host']
+        self.port = self.config['port']
+        self.address = self.config['address']
         self.handler = self.handlers[handler]['handler']
         self.arg_scheme = self.handlers[handler]['arg_scheme']
-        self._initialize()
+        self._initialize_osc()
+
+    def _load_config(self):
+        with open(self.osc_config, 'r') as conf_file:
+            osc_conf = yaml.safe_load(conf_file)
+
+        return osc_conf['server']
 
     def _flex_handler(self, address, *args):
         '''
@@ -51,7 +62,7 @@ class OSCServer:
         print('received message addressed to: {}'.format(address))
         print('message: {}, {}, {}'.format(x, y, z))
 
-    def _initialize(self):
+    def _initialize_osc(self):
         '''
         osc_method() binds handler function to an address, here all subaddresses of /test/
         adding OSCARG_ADDRESS to argscheme sends address in message so server can see it
@@ -59,7 +70,7 @@ class OSCServer:
 
         osc_startup()
         osc_udp_server(self.host, self.port, 'server')
-        osc_method('/test/*', self.handler, argscheme=oscm.OSCARG_ADDRESS + self.arg_scheme)
+        osc_method(self.name, self.handler, argscheme=oscm.OSCARG_ADDRESS + self.arg_scheme)
 
     def serve(self):
         '''
@@ -81,6 +92,7 @@ class OSCServer:
 if __name__ == '__main__':
     try:
         print('initiating server...')
+
         # if use osc4py3.as_allthreads, server runs in the background
         # no need to call server.serve() in an event loop
         server = OSCServer()
