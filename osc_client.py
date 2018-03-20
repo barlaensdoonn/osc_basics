@@ -4,27 +4,21 @@
 # updated 3/20/18
 
 from socket import gaierror
+from .utility import load_config
 from osc4py3.as_allthreads import *
 from osc4py3 import oscbuildparse as oscbp
 
 
 class OSCClient:
+    '''specify host, port, client name, and osc message address in osc_config.yaml'''
 
-    osc_config = 'osc_config.yaml'
-
-    def __init__(self, host='raspberrypi.local', port=5555, name='test_client', address='/test'):
-        self.config = self._load_config()
+    def __init__(self):
+        self.config = load_config('client')
         self.host = self.config['host']
         self.port = self.config['port']
         self.name = self.config['name']
         self.address = self.config['address']
         self._initialize_osc()
-
-    def _load_config(self):
-        with open(self.osc_config, 'r') as conf_file:
-            osc_conf = yaml.safe_load(conf_file)
-
-        return osc_conf['server']
 
     def _initialize_osc(self):
         osc_startup()
