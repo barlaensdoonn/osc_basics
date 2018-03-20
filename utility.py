@@ -6,7 +6,6 @@
 import os
 import yaml
 
-
 osc_config = 'osc_config.yaml'
 
 

@@ -10,7 +10,7 @@ from osc4py3 import oscbuildparse as oscbp
 
 
 class OSCClient:
-    '''specify host, port, client name, and osc message address in osc_config.yaml'''
+    '''specify host, port, client name, and OSC message address in osc_config.yaml'''
 
     def __init__(self):
         self.config = load_config('client')

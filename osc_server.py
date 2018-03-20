@@ -57,7 +57,7 @@ class OSCServer:
 
     def _initialize_osc(self):
         '''
-        osc_method() binds handler function to an address, here all subaddresses of /rfider/
+        osc_method() binds handler function to an address, which is specified in osc_config.yaml
         adding OSCARG_ADDRESS to argscheme sends address in message so server can see it
         '''
 
@@ -67,8 +67,7 @@ class OSCServer:
 
     def serve(self):
         '''
-        a method like this that calls osc_process()
-        is only needed when using osc4py3.as_eventloop
+        a method like this that calls osc_process() is only needed when using osc4py3.as_eventloop
         '''
         running = True
 
@@ -86,8 +85,8 @@ if __name__ == '__main__':
     try:
         print('initiating server...')
 
-        # if use osc4py3.as_allthreads, server runs in the background
-        # no need to call server.serve() in an event loop
+        # if use osc4py3.as_allthreads, server runs in the background after
+        # it's constructed. no need to call server.serve() in an event loop
         server = OSCServer()
     except KeyboardInterrupt:
         print('...user interrupt received, exiting...')
