@@ -80,13 +80,18 @@ class OSCServer:
             running = False
             raise
 
+    def shutdown(self):
+        '''call this when terminating a script that uses OSCServer with osc4py3.as_allthreads'''
+        osc_terminate()
+
 
 if __name__ == '__main__':
     try:
         print('initiating server...')
 
-        # if use osc4py3.as_allthreads, server runs in the background after
+        # if we use osc4py3.as_allthreads, server runs in the background after
         # it's constructed. no need to call server.serve() in an event loop
         server = OSCServer()
     except KeyboardInterrupt:
         print('...user interrupt received, exiting...')
+        server.shutdown()
