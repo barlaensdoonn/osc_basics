@@ -1,11 +1,71 @@
 #!/usr/local/bin/python3
-# basic osc server example with osc4py3
+# basic osc client example with osc4py3
 # 3/1/18
-# updated 3/20/18
+# updated 3/24/18
 
-from utility import load_config
+import os
+import yaml
+from socket import gaierror
 from osc4py3.as_allthreads import *
-from osc4py3 import oscmethod as oscm
+from osc4py3 import oscbuildparse as oscbp
+
+
+osc_config = 'osc_config.yaml'
+
+
+def _get_basepath():
+    return os.path.dirname(os.path.realpath(__file__))
+
+
+def load_config(which):
+    '''
+    which should be either 'server' or 'client'
+    '''
+    conf_path = os.path.join(_get_basepath(), osc_config)
+
+    with open(conf_path, 'r') as conf_file:
+        osc_conf = yaml.safe_load(conf_file)
+
+    return osc_conf[which]
+
+
+class OSCClient:
+    '''specify host, port, client name, and OSC message address in osc_config.yaml'''
+
+    def __init__(self):
+        self.config = load_config('client')
+        self.host = self.config['host']
+        self.port = self.config['port']
+        self.name = self.config['name']
+        self.address = self.config['address']
+        self._initialize_osc()
+
+    def _initialize_osc(self):
+        osc_startup()
+
+        try:
+            osc_udp_client(self.host, self.port, self.name)
+        except gaierror:
+            print("can't find host {self.host}, unable to create client {self.name}".format(self.host, self.name))
+            print('reraising exception')
+            raise
+
+    def _construct_msg(self, data):
+        '''
+        None as second argument to OSCMessage means datatypes are autodetected.
+        replace None with explicit datatype formatted as ',sif' for string, integer, float.
+        data should be a list or tuple of args to pass in message like ['string', 42, 4.2]
+        '''
+
+        return oscbp.OSCMessage(self.address, None, data)
+
+    def send(self, data):
+        msg = self._construct_msg(data)
+        osc_send(msg, self.name)
+
+    def shutdown(self):
+        '''call this when terminating a script that uses OSCClient'''
+        osc_terminate()
 
 
 class OSCServer:
@@ -83,15 +143,3 @@ class OSCServer:
     def shutdown(self):
         '''call this when terminating a script that uses OSCServer with osc4py3.as_allthreads'''
         osc_terminate()
-
-
-if __name__ == '__main__':
-    try:
-        print('initiating server...')
-
-        # if we use osc4py3.as_allthreads, server runs in the background after
-        # it's constructed. no need to call server.serve() in an event loop
-        server = OSCServer()
-    except KeyboardInterrupt:
-        print('...user interrupt received, exiting...')
-        server.shutdown()
