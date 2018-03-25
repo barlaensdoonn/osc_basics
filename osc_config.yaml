@@ -1,9 +1,9 @@
 client:
-    host: mostly_harmless.local
+    host: raspberrypi.local
     port: 5555
-    name: knapford
-    address: /knapford
+    name: test
+    address: /test
 server:
     host: 0.0.0.0
     port: 5556
-    address: /knapford/*
+    address: /test/*
