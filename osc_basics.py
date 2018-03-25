@@ -7,6 +7,7 @@ import os
 import yaml
 from socket import gaierror
 from osc4py3.as_allthreads import *
+from osc4py3 import oscmethod as osm
 from osc4py3 import oscbuildparse as oscbp
 
 
@@ -46,7 +47,7 @@ class OSCClient:
         try:
             osc_udp_client(self.host, self.port, self.name)
         except gaierror:
-            print("can't find host {self.host}, unable to create client {self.name}".format(self.host, self.name))
+            print("can't find host {}, unable to create client {}".format(self.host, self.name))
             print('reraising exception')
             raise
 
@@ -81,11 +82,11 @@ class OSCServer:
         self.handlers = {
             'flex': {
                 'handler': self._flex_handler,
-                'arg_scheme': oscm.OSCARG_DATA
+                'arg_scheme': osm.OSCARG_DATA
             },
             'static': {
                 'handler': self._static_handler,
-                'arg_scheme': oscm.OSCARG_DATAUNPACK
+                'arg_scheme': osm.OSCARG_DATAUNPACK
             }
         }
 
@@ -123,7 +124,7 @@ class OSCServer:
 
         osc_startup()
         osc_udp_server(self.host, self.port, 'server')
-        osc_method(self.address, self.handler, argscheme=oscm.OSCARG_ADDRESS + self.arg_scheme)
+        osc_method(self.address, self.handler, argscheme=osm.OSCARG_ADDRESS + self.arg_scheme)
 
     def serve(self):
         '''
@@ -142,4 +143,4 @@ class OSCServer:
 
     def shutdown(self):
         '''call this when terminating a script that uses OSCServer with osc4py3.as_allthreads'''
-        osc_terminate()
+        osc_terminate
