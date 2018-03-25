@@ -143,4 +143,4 @@ class OSCServer:
 
     def shutdown(self):
         '''call this when terminating a script that uses OSCServer with osc4py3.as_allthreads'''
-        osc_terminate
+        osc_terminate()
