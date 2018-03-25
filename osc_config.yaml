@@ -1,9 +1,9 @@
 client:
-    host: raspberrypi.local
+    host: mostly_harmless.local
     port: 5555
-    name: rfider
-    address: /rfider
+    name: knapford
+    address: /knapford
 server:
     host: 0.0.0.0
-    port: 5555
-    address: /rfider/*
+    port: 5556
+    address: /knapford/*
